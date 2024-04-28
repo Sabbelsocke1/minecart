@@ -1,0 +1,24 @@
+finishp1:
+  x: 23
+  y: 95
+  z: 0
+finishp2:
+  x: 23
+  y: 99
+  z: 13
+Lobby:
+  x: 4
+  y: 97
+  z: 36
+startbutton:
+  x: 31
+  y: 107
+  z: 40
+start1:
+  x: 0
+  y: 0
+  z: 0
+start2:
+  x: 0
+  y: 0
+  z: 0

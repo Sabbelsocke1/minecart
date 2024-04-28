@@ -1,0 +1,28 @@
+name: minecart
+version: '${project.version}'
+main: org.sabbelsocke.minecart.Minecart
+api-version: '1.20'
+load: STARTUP
+
+commands:
+  start:
+    description: Starts the Race
+    usage: /start
+  setfinish:
+    description: Sets the finish Point
+    usage: /setfinish [1/2] (Choose between Point 1 and 2)
+  setlobby:
+    description: Sets the Lobby Point
+    usage: /setlobby
+  setstart:
+    description: Sets the Start Position
+    usage: /startpos [1/2]
+  setstartbutton:
+    description: Sets the Start Button
+    usage: /setstartbutton
+
+listeners:
+  minecartListener: org.sabbelsocke.minecart.listeners.minecartMoveListener
+  playerInteractListener: org.sabbelsocke.minecart.listeners.playerInteractListener
+  vehicleExitListener: org.sabbelsocke.minecart.listeners.vehicleExitListener
+  buttonPushListener: org.sabbelsocke.minecart.listeners.buttonPushListener
