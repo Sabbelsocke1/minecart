@@ -1,52 +1,43 @@
 package org.sabbelsocke.minecart.listeners;
 
-import com.google.gson.JsonObject;
-import io.papermc.paper.event.entity.EntityMoveEvent;
-import org.bukkit.*;
-import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.border.TitledBorder;
+import java.util.HashMap;
 import java.util.Map;
 
 public class minecartMoveListener implements Listener {
+    double speed = 5;
+    Map<Player, Integer> crossedLinesMap = new HashMap<>();
+    boolean isCrossed = false;
 
     @EventHandler
-    public void onVehicleMoveEvent(VehicleMoveEvent event){
-
+    public void onVehicleMoveEvent(VehicleMoveEvent event) {
         Map<Player, Entity> playerEntityMap = playerInteractListener.getPlayerEntityMap();
-        if (event.getVehicle() instanceof Minecart){
+        if (event.getVehicle() instanceof Minecart) {
             Entity minecart = event.getVehicle();
-
-
-            //Bukkit.broadcastMessage("Pass");
-                if(!event.getVehicle().getPassengers().isEmpty()){
-                    //Bukkit.broadcastMessage("Pass2");
-                    Player player = (Player) event.getVehicle().getPassenger();
-
-                if (playerEntityMap.get(player).equals(minecart)){
-                    //Bukkit.broadcastMessage("Pass3");
-
+            if (!event.getVehicle().getPassengers().isEmpty()) {
+                Player player = (Player) event.getVehicle().getPassenger();
+                if (playerEntityMap.get(player).equals(minecart)) {
                     Location playerEyeLocation = player.getEyeLocation();
                     Vector playerDirection = playerEyeLocation.getDirection();
-
                     playerDirection.setY(0);
                     playerDirection.normalize();
-
-                    double speed = 5;
-
                     minecart.setVelocity(playerDirection.multiply(speed));
-
                 }
-                }
+            }
         }
 
         Plugin plugin = (Plugin) Bukkit.getPluginManager().getPlugin("minecart");
@@ -69,21 +60,61 @@ public class minecartMoveListener implements Listener {
                 playerPos.getBlockZ() >= Math.min(fz1, fz2) &&
                 playerPos.getBlockZ() <= Math.max(fz1, fz2);
 
-        if (crossFinish) {
-            for (Player player1 : playerEntityMap.keySet()){
-                player1.sendTitle("", ChatColor.GREEN + player.getName() + " hat gewonnen!");
-                player1.leaveVehicle();
-                Location location = new Location(player1.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
-                player1.teleport(location);
+        if (crossFinish && !isCrossed) {
+            if (!crossedLinesMap.containsKey(player)) {
+                crossedLinesMap.put(player, 1);
+            } else {
+                int crossedLines = crossedLinesMap.get(player) + 1;
+                crossedLinesMap.put(player, crossedLines);
             }
-
+            isCrossed = true;
+            int crossedlines = crossedLinesMap.get(player);
+            if (crossedlines < 4) {
+                player.sendMessage("Runde " + crossedlines + "/3");
+            } else {
+                for (Player player1 : playerEntityMap.keySet()) {
+                    player1.sendTitle("", ChatColor.GREEN + player.getName() + " hat gewonnen!");
+                    player1.leaveVehicle();
+                    Location location = new Location(player1.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
+                    player1.teleport(location);
+                    crossedLinesMap.remove(player1);
+                }
+            }
+        } else if (!crossFinish && isCrossed) {
+            isCrossed = false;
         }
+    }
 
+    public double getSpeed() {
+        return speed;
+    }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
 
+    @EventHandler
+    public void onItemPickupEvent(PlayerPickupItemEvent event) {
+        Map<Player, Entity> playerEntityMap = playerInteractListener.getPlayerEntityMap();
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("minecart");
 
+        if (event.getPlayer().getVehicle() != null && event.getPlayer().getVehicle() instanceof Minecart) {
+            Player player = event.getPlayer();
+            player.sendMessage("Sitzt im Minecart");
+            if (playerEntityMap.get(player).equals(player.getVehicle())) {
+                player.sendMessage("Sitzt im richtigen Minecart");
+                if (event.getItem().getItemStack().getType() == Material.GOLD_BLOCK) {
+                    player.sendMessage("Ja gold haste auch");
+                    this.speed = 15;
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        this.speed = 5;
+                    }, 100L);
+                }
+            }
+        }
+    }
 
-
-
+    public void resetCrossedLines(Player player) {
+        crossedLinesMap.remove(player);
     }
 }

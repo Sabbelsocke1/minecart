@@ -22,7 +22,7 @@ commands:
     usage: /setstartbutton
 
 listeners:
-  minecartListener: org.sabbelsocke.minecart.listeners.minecartMoveListener
+  minecartMoveListener: org.sabbelsocke.minecart.listeners.minecartMoveListener
   playerInteractListener: org.sabbelsocke.minecart.listeners.playerInteractListener
   vehicleExitListener: org.sabbelsocke.minecart.listeners.vehicleExitListener
   buttonPushListener: org.sabbelsocke.minecart.listeners.buttonPushListener

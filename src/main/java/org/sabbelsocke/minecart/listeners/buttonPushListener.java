@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
+import org.sabbelsocke.minecart.utils.countdownUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,9 @@ public class buttonPushListener implements Listener {
 
                     playerEntityMap.put(player, minecart);
                     playerInteractListener.setPlayerEntityMap(playerEntityMap);
+
+                    countdownUtil countdownUtil = new countdownUtil( player, 5);
+                    countdownUtil.runTaskTimer(plugin, 0, 20);
 
                 }
             }

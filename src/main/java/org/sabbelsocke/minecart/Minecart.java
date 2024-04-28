@@ -5,10 +5,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.sabbelsocke.minecart.commands.*;
-import org.sabbelsocke.minecart.listeners.buttonPushListener;
-import org.sabbelsocke.minecart.listeners.minecartMoveListener;
-import org.sabbelsocke.minecart.listeners.playerInteractListener;
-import org.sabbelsocke.minecart.listeners.vehicleExitListener;
+import org.sabbelsocke.minecart.listeners.*;
 
 import java.io.File;
 import java.io.IOException;
