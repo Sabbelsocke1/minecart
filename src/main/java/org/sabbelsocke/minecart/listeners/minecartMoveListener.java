@@ -17,9 +17,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,6 +25,8 @@ public class minecartMoveListener implements Listener {
     double speed = 0.5;
     private ConcurrentHashMap<Player, Integer> crossedLinesMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Player, Boolean> isCrossedMap = new ConcurrentHashMap<>();
+    Queue<Player> winners = new LinkedList<>();
+
 
     boolean isCrossed = false;
 
@@ -115,17 +115,18 @@ public class minecartMoveListener implements Listener {
                         direction.normalize();
                         double speed = 0;
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SLOW, 3 * 20, 1);
+                        player.sendTitle("", ChatColor.DARK_RED +"Du bist nun langsamer!");
                         player.addPotionEffect(potionEffect);
 
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                            player.getInventory().remove(Material.REDSTONE_BLOCK);
+                            player.getInventory().remove(Material.DIAMOND_BLOCK);
                             Vector direction2 = player.getLocation().getDirection();
                             direction2.setY(0.0001);
                             direction2.normalize();
                             double speed2 = 0.1;
                             minecart.setVelocity(direction2.multiply(speed2));
 
-                        }, 20L);
+                        }, 60L);
                     } else if (randomInt == 1) {
                         Minecart minecart = (Minecart) player.getVehicle();
                         Vector direction = player.getLocation().getDirection();
@@ -133,17 +134,19 @@ public class minecartMoveListener implements Listener {
                         this.speed = 1;
                         minecart.setVelocity(direction.multiply(speed));
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 3 * 20, 1);
+                        player.sendTitle("", ChatColor.DARK_AQUA +"Du bist nun schneller!");
+
                         player.addPotionEffect(potionEffect);
 
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                            player.getInventory().remove(Material.GOLD_BLOCK);
+                            player.getInventory().remove(Material.DIAMOND_BLOCK);
                             Vector direction2 = player.getLocation().getDirection();
                             direction2.setY(0.0001);
                             direction2.normalize();
                             this.speed = 0.5;
                             minecart.setVelocity(direction2.multiply(speed));
 
-                        }, 20L);
+                        }, 60L);
                     }
                 }
             }
