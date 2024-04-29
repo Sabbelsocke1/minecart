@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -81,7 +83,7 @@ public class minecartMoveListener implements Listener {
                     player1.leaveVehicle();
                     Location location = new Location(player1.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
                     player1.teleport(location);
-                    iterator.remove(); // Remove the entry from the map
+                    iterator.remove();
                 }
                 isCrossedMap.put(player, false);
             }
@@ -105,40 +107,44 @@ public class minecartMoveListener implements Listener {
         if (event.getPlayer().getVehicle() != null && event.getPlayer().getVehicle() instanceof Minecart) {
             Player player = event.getPlayer();
             if (playerEntityMap.get(player).equals(player.getVehicle())) {
-                if (event.getItem().getItemStack().getType() == Material.REDSTONE_BLOCK) {
-                    Minecart minecart = (Minecart) player.getVehicle();
-                    Vector direction = player.getLocation().getDirection();
-                    direction.normalize();
-                    double speed = 0;
-                    minecart.setVelocity(direction.multiply(speed));
+                if (event.getItem().getItemStack().getType() == Material.DIAMOND_BLOCK) {
+                    int randomInt = (int) (Math.random() * 2);
+                    if (randomInt == 0) {
+                        Minecart minecart = (Minecart) player.getVehicle();
+                        Vector direction = player.getLocation().getDirection();
+                        direction.normalize();
+                        double speed = 0;
+                        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SLOW, 3 * 20, 1);
+                        player.addPotionEffect(potionEffect);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        player.getInventory().remove(Material.REDSTONE_BLOCK);
-                        Vector direction2 = player.getLocation().getDirection();
-                        direction2.setY(0.0001);
-                        direction2.normalize();
-                        // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
-                        double speed2 = 0.1; // Geschwindigkeit anpassen
-                        minecart.setVelocity(direction2.multiply(speed2));
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            player.getInventory().remove(Material.REDSTONE_BLOCK);
+                            Vector direction2 = player.getLocation().getDirection();
+                            direction2.setY(0.0001);
+                            direction2.normalize();
+                            double speed2 = 0.1;
+                            minecart.setVelocity(direction2.multiply(speed2));
 
-                    }, 20L);
-                } else if (event.getItem().getItemStack().getType() == Material.GOLD_BLOCK) {
-                    Minecart minecart = (Minecart) player.getVehicle();
-                    Vector direction = player.getLocation().getDirection();
-                    direction.normalize();
-                    this.speed = 1;
-                    minecart.setVelocity(direction.multiply(speed));
+                        }, 20L);
+                    } else if (randomInt == 1) {
+                        Minecart minecart = (Minecart) player.getVehicle();
+                        Vector direction = player.getLocation().getDirection();
+                        direction.normalize();
+                        this.speed = 1;
+                        minecart.setVelocity(direction.multiply(speed));
+                        PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 3 * 20, 1);
+                        player.addPotionEffect(potionEffect);
 
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        player.getInventory().remove(Material.GOLD_BLOCK);
-                        Vector direction2 = player.getLocation().getDirection();
-                        direction2.setY(0.0001);
-                        direction2.normalize();
-                        // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
-                        this.speed = 0.5; // Geschwindigkeit anpassen
-                        minecart.setVelocity(direction2.multiply(speed));
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            player.getInventory().remove(Material.GOLD_BLOCK);
+                            Vector direction2 = player.getLocation().getDirection();
+                            direction2.setY(0.0001);
+                            direction2.normalize();
+                            this.speed = 0.5;
+                            minecart.setVelocity(direction2.multiply(speed));
 
-                    }, 20L);
+                        }, 20L);
+                    }
                 }
             }
         }

@@ -28,23 +28,12 @@ public class itemSpawnUtil {
         location3 = new Location(player.getWorld(), (Double) config.get("itemSpawner3.x"), (Double) config.get("itemSpawner3.y"), (Double) config.get("itemSpawner3.z"));
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            ItemStack redstoneBlock = new ItemStack(Material.REDSTONE_BLOCK);
-            ItemStack goldBlock = new ItemStack(Material.GOLD_BLOCK);
-
-            int randomInt = (int) (Math.random() * 2);
+            ItemStack diamondBlock = new ItemStack(Material.DIAMOND_BLOCK);
 
 
-            if (randomInt == 0) {
-
-                spawnItem(location1, redstoneBlock);
-                spawnItem(location2, redstoneBlock);
-                spawnItem(location3, redstoneBlock);
-            }else if (randomInt == 1){
-
-                spawnItem(location1, goldBlock);
-                spawnItem(location2, goldBlock);
-                spawnItem(location3, goldBlock);
-            }
+                spawnItem(location1, diamondBlock);
+                spawnItem(location2, diamondBlock);
+                spawnItem(location3, diamondBlock);
 
 
         }, 0L, 20 * 20L);
@@ -60,10 +49,7 @@ public class itemSpawnUtil {
     private static void spawnItem(Location location, ItemStack item) {
         for (Entity entity : location.getNearbyEntities(2, 3, 2)) {
             if (entity instanceof Item) {
-                Item existingItem = (Item) entity;
-                if (existingItem.getItemStack().getType() == item.getType()) {
-                    return;
-                }
+                return;
             }
         }
         location.getWorld().dropItemNaturally(location, item);
