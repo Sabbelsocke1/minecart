@@ -75,17 +75,30 @@ public class minecartMoveListener implements Listener {
             if (crossedlines < 4) {
                 player.sendTitle("", ChatColor.DARK_AQUA +"Runde " +  crossedlines + "/3!");
             } else {
-                Iterator<Map.Entry<Player, Integer>> iterator = crossedLinesMap.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry<Player, Integer> entry = iterator.next();
-                    Player player1 = entry.getKey();
-                    player1.sendTitle("", ChatColor.GREEN + player.getName() + " hat gewonnen!");
-                    player1.leaveVehicle();
-                    Location location = new Location(player1.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
-                    player1.teleport(location);
-                    iterator.remove();
+                boolean t = false;
+                for (int j=0; j <= winners.size(); j++){
+                    if (winners.peek() == player) {
+                        t = true;
+                    }
                 }
+                if (!t){
+                    winners.add(player);
+                }
+
                 isCrossedMap.put(player, false);
+
+                if (winners.size() == crossedLinesMap.size()) {
+                    int size = winners.size();
+                    for (int i = 1; i <= size; i++) {
+                        Player p = winners.poll();
+                        if (p != null) {
+                            Bukkit.broadcastMessage(ChatColor.GOLD + "Platz " + i + ": " + p.getName());
+                            p.leaveVehicle();
+                            Location location = new Location(p.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
+                            p.teleport(location);
+                        }
+                    }
+                }
             }
         } else if (!crossFinish && isCrossed) {
             isCrossedMap.put(player, false);
@@ -114,6 +127,7 @@ public class minecartMoveListener implements Listener {
                         Vector direction = player.getLocation().getDirection();
                         direction.normalize();
                         double speed = 0;
+                        minecart.setVelocity(direction.multiply(speed));
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SLOW, 3 * 20, 1);
                         player.sendTitle("", ChatColor.DARK_RED +"Du bist nun langsamer!");
                         player.addPotionEffect(potionEffect);
