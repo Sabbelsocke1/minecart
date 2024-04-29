@@ -1,9 +1,6 @@
 package org.sabbelsocke.minecart.utils;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -34,11 +31,13 @@ public class countdownUtil extends BukkitRunnable {
         if (secondsRemaining >0 ){
             for (Player player1 : playerEntityMap.keySet()){
                 player1.sendMessage(ChatColor.YELLOW + "Das Rennen beginnt in " + secondsRemaining + "...");
+                player1.playSound(player1.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f, 1.0f);
             }
             secondsRemaining--;
         }else {
             for (Player player1 : playerEntityMap.keySet()){
                 player1.sendMessage( ChatColor.DARK_BLUE + "Das Rennen beginnt jetzt!");
+                player1.playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1.0f, 1.0f);
                 Firework firework = player1.getWorld().spawn(player1.getLocation(), Firework.class);
                 FireworkMeta fireworkMeta = firework.getFireworkMeta();
 

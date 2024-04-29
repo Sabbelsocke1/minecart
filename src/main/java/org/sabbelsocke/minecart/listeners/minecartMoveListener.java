@@ -102,16 +102,22 @@ public class minecartMoveListener implements Listener {
         Map<Player, Entity> playerEntityMap = playerInteractListener.getPlayerEntityMap();
         Plugin plugin = Bukkit.getPluginManager().getPlugin("minecart");
 
-        if (event.getPlayer().getVehicle() != null && event.getPlayer().getVehicle() instanceof Minecart) {
+        if (event.getPlayer().getVehicle()!= null && event.getPlayer().getVehicle() instanceof Minecart) {
             Player player = event.getPlayer();
             player.sendMessage("Sitzt im Minecart");
             if (playerEntityMap.get(player).equals(player.getVehicle())) {
                 player.sendMessage("Sitzt im richtigen Minecart");
                 if (event.getItem().getItemStack().getType() == Material.GOLD_BLOCK) {
                     player.sendMessage("Ja gold haste auch");
-                    this.speed = 15;
+                    setSpeed(15); // Set the speed to 15
+                    Minecart minecart = (Minecart) player.getVehicle();
+                    Location playerEyeLocation = player.getEyeLocation();
+                    Vector playerDirection = playerEyeLocation.getDirection();
+                    playerDirection.setY(0);
+                    playerDirection.normalize();
+                    minecart.setVelocity(playerDirection.multiply(speed)); // Update the minecart's velocity
                     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        this.speed = 5;
+                        setSpeed(5); // Reset the speed to 5 after 100L
                     }, 100L);
                 }
             }
