@@ -45,8 +45,14 @@ public class buttonPushListener implements Listener {
                 if (playerInteractListener.getPlayerEntityMap().size() == 0) {
                     Location location = new Location(player.getWorld(), config.getInt("start1.x"), config.getInt("start1.y"), config.getInt("start1.z"));
                     Entity minecart = player.getWorld().spawnEntity(location, EntityType.MINECART);
+                    float currentYaw = minecart.getLocation().getYaw();
+                    float newYaw = currentYaw - 90;
+
+                    minecart.setRotation(newYaw, minecart.getLocation().getPitch());
+
                     minecart.setPersistent(true);
                     minecart.addPassenger(player);
+                    player.setRotation(minecart.getYaw()-90, minecart.getPitch());
                     minecart.setGravity(false);
 
                     playerEntityMap.put(player, minecart);

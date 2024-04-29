@@ -64,8 +64,9 @@ public class countdownUtil extends BukkitRunnable {
                     // Berechne die Bewegungsrichtung
                     Vector direction = player.getLocation().getDirection();
                     direction.setY(0.0001);
+                    direction.normalize();
                     // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
-                    double speed = 5; // Geschwindigkeit anpassen
+                    double speed = 0.1; // Geschwindigkeit anpassen
                     minecart.setVelocity(direction.multiply(speed));
                 }
             }

@@ -16,11 +16,16 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class minecartMoveListener implements Listener {
     double speed = 5;
-    Map<Player, Integer> crossedLinesMap = new HashMap<>();
+    private ConcurrentHashMap<Player, Integer> crossedLinesMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Player, Boolean> isCrossedMap = new ConcurrentHashMap<>();
+
     boolean isCrossed = false;
 
     @EventHandler
@@ -60,31 +65,30 @@ public class minecartMoveListener implements Listener {
                 playerPos.getBlockZ() >= Math.min(fz1, fz2) &&
                 playerPos.getBlockZ() <= Math.max(fz1, fz2);
 
-        if (crossFinish && !isCrossed) {
-            if (!crossedLinesMap.containsKey(player)) {
-                crossedLinesMap.put(player, 1);
-            } else {
-                int crossedLines = crossedLinesMap.get(player) + 1;
-                crossedLinesMap.put(player, crossedLines);
-            }
-            isCrossed = true;
+        boolean isCrossed = isCrossedMap.getOrDefault(player, false);
+        if (crossFinish &&!isCrossed) {
+            crossedLinesMap.compute(player, (k, v) -> v == null? 1 : v + 1);
+            isCrossedMap.put(player, true);
             int crossedlines = crossedLinesMap.get(player);
             if (crossedlines < 4) {
-                player.sendMessage("Runde " + crossedlines + "/3");
+                player.sendTitle("", ChatColor.DARK_AQUA +"Runde " +  crossedlines + "/3!");
             } else {
-                for (Player player1 : playerEntityMap.keySet()) {
+                Iterator<Map.Entry<Player, Integer>> iterator = crossedLinesMap.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<Player, Integer> entry = iterator.next();
+                    Player player1 = entry.getKey();
                     player1.sendTitle("", ChatColor.GREEN + player.getName() + " hat gewonnen!");
                     player1.leaveVehicle();
                     Location location = new Location(player1.getWorld(), config.getInt("Lobby.x"), config.getInt("Lobby.y"), config.getInt("Lobby.z"));
                     player1.teleport(location);
-                    crossedLinesMap.remove(player1);
+                    iterator.remove(); // Remove the entry from the map
                 }
+                isCrossedMap.put(player, false);
             }
         } else if (!crossFinish && isCrossed) {
-            isCrossed = false;
+            isCrossedMap.put(player, false);
         }
     }
-
     public double getSpeed() {
         return speed;
     }
