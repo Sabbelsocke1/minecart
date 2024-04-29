@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class minecartMoveListener implements Listener {
-    double speed = 5;
+    double speed = 0.5;
     private ConcurrentHashMap<Player, Integer> crossedLinesMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Player, Boolean> isCrossedMap = new ConcurrentHashMap<>();
 
@@ -102,7 +102,7 @@ public class minecartMoveListener implements Listener {
         Map<Player, Entity> playerEntityMap = playerInteractListener.getPlayerEntityMap();
         Plugin plugin = Bukkit.getPluginManager().getPlugin("minecart");
 
-        if (event.getPlayer().getVehicle()!= null && event.getPlayer().getVehicle() instanceof Minecart) {
+        if (event.getPlayer().getVehicle() != null && event.getPlayer().getVehicle() instanceof Minecart) {
             Player player = event.getPlayer();
             if (playerEntityMap.get(player).equals(player.getVehicle())) {
                 if (event.getItem().getItemStack().getType() == Material.REDSTONE_BLOCK) {
@@ -122,10 +122,28 @@ public class minecartMoveListener implements Listener {
                         minecart.setVelocity(direction2.multiply(speed2));
 
                     }, 20L);
+                } else if (event.getItem().getItemStack().getType() == Material.GOLD_BLOCK) {
+                    Minecart minecart = (Minecart) player.getVehicle();
+                    Vector direction = player.getLocation().getDirection();
+                    direction.normalize();
+                    this.speed = 1;
+                    minecart.setVelocity(direction.multiply(speed));
+
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        player.getInventory().remove(Material.GOLD_BLOCK);
+                        Vector direction2 = player.getLocation().getDirection();
+                        direction2.setY(0.0001);
+                        direction2.normalize();
+                        // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
+                        this.speed = 0.5; // Geschwindigkeit anpassen
+                        minecart.setVelocity(direction2.multiply(speed));
+
+                    }, 20L);
                 }
             }
         }
     }
+
 
     public void resetCrossedLines(Player player) {
         crossedLinesMap.remove(player);
