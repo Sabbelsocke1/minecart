@@ -60,12 +60,10 @@ public class countdownUtil extends BukkitRunnable {
             for (Player player : playerEntityMap.keySet()) {
                 Entity minecart = playerEntityMap.get(player);
                 if (minecart.getType() == EntityType.MINECART && player.isInsideVehicle() && player.getVehicle().equals(minecart)) {
-                    // Berechne die Bewegungsrichtung
                     Vector direction = player.getLocation().getDirection();
                     direction.setY(0.0001);
                     direction.normalize();
-                    // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
-                    double speed = 0.1; // Geschwindigkeit anpassen
+                    double speed = 0.1;
                     minecart.setVelocity(direction.multiply(speed));
                 }
             }
