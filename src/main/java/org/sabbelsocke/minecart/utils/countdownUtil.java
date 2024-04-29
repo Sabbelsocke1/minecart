@@ -73,5 +73,8 @@ public class countdownUtil extends BukkitRunnable {
             this.cancel();
         }
 
+        itemSpawnUtil.spawnRedstone(player);
+
+
     }
 }

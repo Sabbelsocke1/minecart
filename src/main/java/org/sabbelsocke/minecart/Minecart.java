@@ -27,6 +27,7 @@ public final class Minecart extends JavaPlugin {
         getCommand("setlobby").setExecutor(new setLobbyCommand());
         getCommand("setstart").setExecutor(new setStartCommand());
         getCommand("setstartbutton").setExecutor(new setButtonCommand());
+        getCommand("setspawner").setExecutor(new setSpawnerCommand());
 
         configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()){

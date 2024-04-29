@@ -20,6 +20,9 @@ commands:
   setstartbutton:
     description: Sets the Start Button
     usage: /setstartbutton
+  setspawner:
+    description: Sets the Position for a Item Spawner
+    usage: /setspawner [1-3]
 
 listeners:
   minecartMoveListener: org.sabbelsocke.minecart.listeners.minecartMoveListener

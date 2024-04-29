@@ -104,21 +104,24 @@ public class minecartMoveListener implements Listener {
 
         if (event.getPlayer().getVehicle()!= null && event.getPlayer().getVehicle() instanceof Minecart) {
             Player player = event.getPlayer();
-            player.sendMessage("Sitzt im Minecart");
             if (playerEntityMap.get(player).equals(player.getVehicle())) {
-                player.sendMessage("Sitzt im richtigen Minecart");
-                if (event.getItem().getItemStack().getType() == Material.GOLD_BLOCK) {
-                    player.sendMessage("Ja gold haste auch");
-                    setSpeed(15); // Set the speed to 15
+                if (event.getItem().getItemStack().getType() == Material.REDSTONE_BLOCK) {
                     Minecart minecart = (Minecart) player.getVehicle();
-                    Location playerEyeLocation = player.getEyeLocation();
-                    Vector playerDirection = playerEyeLocation.getDirection();
-                    playerDirection.setY(0);
-                    playerDirection.normalize();
-                    minecart.setVelocity(playerDirection.multiply(speed)); // Update the minecart's velocity
+                    Vector direction = player.getLocation().getDirection();
+                    direction.normalize();
+                    double speed = 0;
+                    minecart.setVelocity(direction.multiply(speed));
+
                     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        setSpeed(5); // Reset the speed to 5 after 100L
-                    }, 100L);
+                        player.getInventory().remove(Material.REDSTONE_BLOCK);
+                        Vector direction2 = player.getLocation().getDirection();
+                        direction2.setY(0.0001);
+                        direction2.normalize();
+                        // Setze die Geschwindigkeit des Minecarts entsprechend der Spielerbewegung
+                        double speed2 = 0.1; // Geschwindigkeit anpassen
+                        minecart.setVelocity(direction2.multiply(speed2));
+
+                    }, 20L);
                 }
             }
         }
