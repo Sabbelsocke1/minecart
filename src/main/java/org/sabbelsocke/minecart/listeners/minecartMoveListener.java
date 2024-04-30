@@ -74,13 +74,11 @@ public class minecartMoveListener implements Listener {
             if (crossedlines < 4) {
                 player.sendTitle("", ChatColor.DARK_AQUA + "Runde " + crossedlines + "/3!");
             } else {
-                // Überprüfen, ob der Spieler bereits in der Queue ist
                 if (!winners.contains(player)) {
                     winners.add(player);
                 }
                 isCrossedMap.put(player, false);
 
-                // Überprüfen, ob alle Spieler das Rennen beendet haben
                 if (winners.size() == crossedLinesMap.size()) {
                     int size = winners.size();
                     for (int i = 1; i <= size; i++) {
