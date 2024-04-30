@@ -121,7 +121,7 @@ public class minecartMoveListener implements Listener {
                     if (randomInt == 0) {
                         setPlayerSpeed(player, 0);
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SLOW, 3 * 20, 1);
-                        player.sendTitle("", ChatColor.DARK_RED + "Du bist nun langsamer!");
+                        player.sendTitle("", ChatColor.DARK_RED + "Du bist nun langsamer!", 10 , 10 ,10);
                         player.addPotionEffect(potionEffect);
 
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -138,7 +138,7 @@ public class minecartMoveListener implements Listener {
                     } else if (randomInt == 1) {
                         setPlayerSpeed(player, 1);
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 3 * 20, 1);
-                        player.sendTitle("", ChatColor.DARK_AQUA + "Du bist nun schneller!");
+                        player.sendTitle("", ChatColor.DARK_AQUA + "Du bist nun schneller!", 10 , 40 , 10);
 
                         player.addPotionEffect(potionEffect);
 
