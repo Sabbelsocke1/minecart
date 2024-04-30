@@ -22,7 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class minecartMoveListener implements Listener {
-    double speed = 0.5;
+    double defaultSpeed = 0.5;
+    private ConcurrentHashMap<Player, Double> playerSpeedMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Player, Integer> crossedLinesMap = new ConcurrentHashMap<>();
     private ConcurrentHashMap<Player, Boolean> isCrossedMap = new ConcurrentHashMap<>();
     Queue<Player> winners = new LinkedList<>();
@@ -41,7 +42,7 @@ public class minecartMoveListener implements Listener {
                     Vector playerDirection = playerEyeLocation.getDirection();
                     playerDirection.setY(0);
                     playerDirection.normalize();
-                    minecart.setVelocity(playerDirection.multiply(speed));
+                    minecart.setVelocity(playerDirection.multiply(getPlayerSpeed(player)));
                 }
             }
         }
@@ -99,12 +100,12 @@ public class minecartMoveListener implements Listener {
     }
 
 
-    public double getSpeed() {
-        return speed;
+    public double getPlayerSpeed(Player player) {
+        return playerSpeedMap.getOrDefault(player, defaultSpeed);
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public void setPlayerSpeed(Player player, double speed) {
+        playerSpeedMap.put(player, speed);
     }
 
     @EventHandler
@@ -118,13 +119,9 @@ public class minecartMoveListener implements Listener {
                 if (event.getItem().getItemStack().getType() == Material.DIAMOND_BLOCK) {
                     int randomInt = (int) (Math.random() * 2);
                     if (randomInt == 0) {
-                        Minecart minecart = (Minecart) player.getVehicle();
-                        Vector direction = player.getLocation().getDirection();
-                        direction.normalize();
-                        double speed = 0;
-                        minecart.setVelocity(direction.multiply(speed));
+                        setPlayerSpeed(player, 0);
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SLOW, 3 * 20, 1);
-                        player.sendTitle("", ChatColor.DARK_RED +"Du bist nun langsamer!");
+                        player.sendTitle("", ChatColor.DARK_RED + "Du bist nun langsamer!");
                         player.addPotionEffect(potionEffect);
 
                         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -132,18 +129,16 @@ public class minecartMoveListener implements Listener {
                             Vector direction2 = player.getLocation().getDirection();
                             direction2.setY(0.0001);
                             direction2.normalize();
-                            double speed2 = 0.1;
+                            double speed2 = 0.5;
+                            Minecart minecart = (Minecart) player.getVehicle();
                             minecart.setVelocity(direction2.multiply(speed2));
+                            setPlayerSpeed(player, speed2);
 
-                        }, 60L);
+                        }, 20L);
                     } else if (randomInt == 1) {
-                        Minecart minecart = (Minecart) player.getVehicle();
-                        Vector direction = player.getLocation().getDirection();
-                        direction.normalize();
-                        this.speed = 1;
-                        minecart.setVelocity(direction.multiply(speed));
+                        setPlayerSpeed(player, 1);
                         PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, 3 * 20, 1);
-                        player.sendTitle("", ChatColor.DARK_AQUA +"Du bist nun schneller!");
+                        player.sendTitle("", ChatColor.DARK_AQUA + "Du bist nun schneller!");
 
                         player.addPotionEffect(potionEffect);
 
@@ -152,8 +147,10 @@ public class minecartMoveListener implements Listener {
                             Vector direction2 = player.getLocation().getDirection();
                             direction2.setY(0.0001);
                             direction2.normalize();
-                            this.speed = 0.5;
-                            minecart.setVelocity(direction2.multiply(speed));
+                            double speed2 = 0.5;
+                            Minecart minecart = (Minecart) event.getPlayer().getVehicle();
+                            minecart.setVelocity(direction2.multiply(speed2));
+                            setPlayerSpeed(player, speed2);
 
                         }, 60L);
                     }
@@ -166,5 +163,6 @@ public class minecartMoveListener implements Listener {
         crossedLinesMap.clear();
         isCrossedMap.clear();
         winners.clear();
+        playerSpeedMap.clear();
     }
 }
