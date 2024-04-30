@@ -18,10 +18,14 @@ import org.sabbelsocke.minecart.utils.countdownUtil;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class buttonPushListener implements Listener {
+
+    Map<Player, Entity> playerEntityMap = new HashMap<>();
 
     @EventHandler
     public void playerInteractEvent(PlayerInteractEvent event){
+        setPlayerEntityMap();
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK){
             Player player = event.getPlayer();
@@ -39,43 +43,49 @@ public class buttonPushListener implements Listener {
                     clickedBlock.getY() == expectedY &&
                     clickedBlock.getZ() == expectedZ
             ){
-                Map<Player, Entity> playerEntityMap = new HashMap<>();
-                playerEntityMap = playerInteractListener.getPlayerEntityMap();
+
 
                 if (playerInteractListener.getPlayerEntityMap().size() == 0) {
                     Location location = new Location(player.getWorld(), config.getInt("start1.x"), config.getInt("start1.y"), config.getInt("start1.z"));
-                    Entity minecart = player.getWorld().spawnEntity(location, EntityType.MINECART);
-                    float currentYaw = minecart.getLocation().getYaw();
-                    float newYaw = currentYaw - 90;
+                    spawnMinecart(player, location);
 
-                    minecart.setRotation(newYaw, minecart.getLocation().getPitch());
-
-                    minecart.setPersistent(true);
-                    minecart.addPassenger(player);
-                    player.setRotation(minecart.getYaw()-90, minecart.getPitch());
-                    minecart.setGravity(false);
-
-                    playerEntityMap.put(player, minecart);
-                    playerInteractListener.setPlayerEntityMap(playerEntityMap);
                 } else if (playerInteractListener.getPlayerEntityMap().size() == 1) {
                     Location location = new Location(player.getWorld(), config.getInt("start2.x"), config.getInt("start2.y"), config.getInt("start2.z"));
-                    Entity minecart = player.getWorld().spawnEntity(location, EntityType.MINECART);
-                    minecart.setPersistent(true);
-                    minecart.addPassenger(player);
-                    minecart.setGravity(false);
-                    float currentYaw = minecart.getLocation().getYaw();
-                    float newYaw = currentYaw - 90;
-                    minecart.setRotation(newYaw, minecart.getLocation().getPitch());
-
-                    playerEntityMap.put(player, minecart);
-                    playerInteractListener.setPlayerEntityMap(playerEntityMap);
+                    spawnMinecart(player, location);
 
                     countdownUtil countdownUtil = new countdownUtil( player, 5);
                     countdownUtil.runTaskTimer(plugin, 0, 20);
+
+                }else if (playerInteractListener.getPlayerEntityMap().size() == 2) {
+                    Location location = new Location(player.getWorld(), config.getInt("start3.x"), config.getInt("start3.y"), config.getInt("start3.z"));
+                    spawnMinecart(player, location);
+
+                }else if (playerInteractListener.getPlayerEntityMap().size() == 3) {
+                    Location location = new Location(player.getWorld(), config.getInt("start4.x"), config.getInt("start4.y"), config.getInt("start4.z"));
+                    spawnMinecart(player, location);
+
 
                 }
             }
         }
 
+    }
+
+    public void spawnMinecart(Player player, Location location){
+        Entity minecart = player.getWorld().spawnEntity(location, EntityType.MINECART);
+        minecart.setPersistent(true);
+        minecart.addPassenger(player);
+        minecart.setGravity(false);
+        float currentYaw = minecart.getLocation().getYaw();
+        float newYaw = currentYaw - 90;
+        minecart.setRotation(newYaw, minecart.getLocation().getPitch());
+
+        playerEntityMap.put(player, minecart);
+        playerInteractListener.setPlayerEntityMap(playerEntityMap);
+
+    }
+
+    public void setPlayerEntityMap(){
+        playerEntityMap = playerInteractListener.getPlayerEntityMap();
     }
 }

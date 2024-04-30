@@ -27,7 +27,6 @@ public class minecartMoveListener implements Listener {
     private ConcurrentHashMap<Player, Boolean> isCrossedMap = new ConcurrentHashMap<>();
     Queue<Player> winners = new LinkedList<>();
 
-
     boolean isCrossed = false;
 
     @EventHandler
@@ -68,25 +67,20 @@ public class minecartMoveListener implements Listener {
                 playerPos.getBlockZ() <= Math.max(fz1, fz2);
 
         boolean isCrossed = isCrossedMap.getOrDefault(player, false);
-        if (crossFinish &&!isCrossed) {
-            crossedLinesMap.compute(player, (k, v) -> v == null? 1 : v + 1);
+        if (crossFinish && !isCrossed) {
+            crossedLinesMap.compute(player, (k, v) -> v == null ? 1 : v + 1);
             isCrossedMap.put(player, true);
             int crossedlines = crossedLinesMap.get(player);
             if (crossedlines < 4) {
-                player.sendTitle("", ChatColor.DARK_AQUA +"Runde " +  crossedlines + "/3!");
+                player.sendTitle("", ChatColor.DARK_AQUA + "Runde " + crossedlines + "/3!");
             } else {
-                boolean t = false;
-                for (int j=0; j <= winners.size(); j++){
-                    if (winners.peek() == player) {
-                        t = true;
-                    }
-                }
-                if (!t){
+                // Überprüfen, ob der Spieler bereits in der Queue ist
+                if (!winners.contains(player)) {
                     winners.add(player);
                 }
-
                 isCrossedMap.put(player, false);
 
+                // Überprüfen, ob alle Spieler das Rennen beendet haben
                 if (winners.size() == crossedLinesMap.size()) {
                     int size = winners.size();
                     for (int i = 1; i <= size; i++) {
@@ -98,12 +92,15 @@ public class minecartMoveListener implements Listener {
                             p.teleport(location);
                         }
                     }
+                    resetRaceData();
                 }
             }
         } else if (!crossFinish && isCrossed) {
             isCrossedMap.put(player, false);
         }
     }
+
+
     public double getSpeed() {
         return speed;
     }
@@ -167,8 +164,9 @@ public class minecartMoveListener implements Listener {
         }
     }
 
-
-    public void resetCrossedLines(Player player) {
-        crossedLinesMap.remove(player);
+    public void resetRaceData() {
+        crossedLinesMap.clear();
+        isCrossedMap.clear();
+        winners.clear();
     }
 }

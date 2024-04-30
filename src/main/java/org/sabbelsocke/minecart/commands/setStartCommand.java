@@ -34,6 +34,20 @@ public class setStartCommand implements CommandExecutor {
                 sender.sendMessage("Die Startposition 2 wurde erfolgreich gesetzt!");
                 plugin.saveConfig();
                 plugin.reloadConfig();
+            }else if (args[0].equals("3")) {
+                config.set("start3.x", location.getX());
+                config.set("start3.y", location.getY());
+                config.set("start3.z", location.getZ());
+                sender.sendMessage("Die Startposition 3 wurde erfolgreich gesetzt!");
+                plugin.saveConfig();
+                plugin.reloadConfig();
+            }else if (args[0].equals("4")) {
+                config.set("start4.x", location.getX());
+                config.set("start4.y", location.getY());
+                config.set("start4.z", location.getZ());
+                sender.sendMessage("Die Startposition 4 wurde erfolgreich gesetzt!");
+                plugin.saveConfig();
+                plugin.reloadConfig();
             }
         }
         return true;

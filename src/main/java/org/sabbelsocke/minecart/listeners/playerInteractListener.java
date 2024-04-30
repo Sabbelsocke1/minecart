@@ -21,7 +21,6 @@ public class playerInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event){
         Player player = event.getPlayer();
 
-        // Bedingung ist das Spieler ein Minecart in der Hand Hölt
         if (player.getItemInHand().getType().equals(Material.MINECART)){
 
             Entity minecart = player.getWorld().spawnEntity(player.getLocation(), EntityType.MINECART);
